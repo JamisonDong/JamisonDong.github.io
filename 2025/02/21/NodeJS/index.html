@@ -1,0 +1,295 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>NodeJS | Jamison's blogs</title><meta name="author" content="Jamsion Dong"><meta name="copyright" content="Jamsion Dong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="NodeJS架构![[Pasted image 20230417191503.png]]V8: 执行JS代码，提供桥梁接口Libuv: 时间循环、时间队列、异步IO第三方模块: zlib、http、c-ares等 libuv![[Pasted image 20230417193706.png]] node事件循环![[Pasted image 20230417193744.png]] NodeJS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NodeJS">
+<meta property="og:url" content="https://jamisondong.github.io/2025/02/21/NodeJS/index.html">
+<meta property="og:site_name" content="Jamison&#39;s blogs">
+<meta property="og:description" content="NodeJS架构![[Pasted image 20230417191503.png]]V8: 执行JS代码，提供桥梁接口Libuv: 时间循环、时间队列、异步IO第三方模块: zlib、http、c-ares等 libuv![[Pasted image 20230417193706.png]] node事件循环![[Pasted image 20230417193744.png]] NodeJS">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png">
+<meta property="article:published_time" content="2025-02-21T14:39:45.115Z">
+<meta property="article:modified_time" content="2025-02-21T14:39:45.115Z">
+<meta property="article:author" content="Jamsion Dong">
+<meta property="article:tag" content="NodeJS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "NodeJS",
+  "url": "https://jamisondong.github.io/2025/02/21/NodeJS/",
+  "image": "https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png",
+  "datePublished": "2025-02-21T14:39:45.115Z",
+  "dateModified": "2025-02-21T14:39:45.115Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Jamsion Dong",
+      "url": "https://jamisondong.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamisondong.github.io/2025/02/21/NodeJS/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'NodeJS',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Jamison's blogs</span></a><a class="nav-page-title" href="/"><span class="site-name">NodeJS</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">NodeJS</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-02-21T14:39:45.115Z" title="发表于 2025-02-21 22:39:45">2025-02-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-02-21T14:39:45.115Z" title="更新于 2025-02-21 22:39:45">2025-02-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%AD%E8%A8%80/">语言</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">666</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="NodeJS架构"><a href="#NodeJS架构" class="headerlink" title="NodeJS架构"></a>NodeJS架构</h2><p>![[Pasted image 20230417191503.png]]<br><strong>V8: 执行JS代码，提供桥梁接口</strong><br><strong>Libuv: 时间循环、时间队列、异步IO<br>第三方模块: zlib、http、c-ares等</strong></p>
+<h3 id="libuv"><a href="#libuv" class="headerlink" title="libuv"></a>libuv</h3><p>![[Pasted image 20230417193706.png]]</p>
+<h3 id="node事件循环"><a href="#node事件循环" class="headerlink" title="node事件循环"></a>node事件循环</h3><p>![[Pasted image 20230417193744.png]]</p>
+<h2 id="NodeJS特点"><a href="#NodeJS特点" class="headerlink" title="NodeJS特点"></a>NodeJS特点</h2><h3 id="NodeJS主线程单线程"><a href="#NodeJS主线程单线程" class="headerlink" title="NodeJS主线程单线程"></a>NodeJS主线程单线程</h3><h3 id="NodeJS更适合IO密集型的高并发请求"><a href="#NodeJS更适合IO密集型的高并发请求" class="headerlink" title="NodeJS更适合IO密集型的高并发请求"></a>NodeJS更适合IO密集型的高并发请求</h3><h3 id="NodeJS作为中间层"><a href="#NodeJS作为中间层" class="headerlink" title="NodeJS作为中间层"></a>NodeJS作为中间层</h3><p>![[Pasted image 20230418140506.png]]</p>
+<h2 id="常见全局变量"><a href="#常见全局变量" class="headerlink" title="常见全局变量"></a>常见全局变量</h2><p><code>__filename</code>: 返回正在执行脚本文件的绝对路径<br><code>__dirname</code>: 返回正在执行脚本的所在目录<br><code>timer类函数</code>: 执行顺序与事件循环间的关系<br><code>process</code>:提供与当前进程互动的接口<br><code>require</code>: 实现模块的加载<br><code>module、exports</code>: 处理模块的导出</p>
+<h3 id="process"><a href="#process" class="headerlink" title="process"></a>process</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>资源： <span class="variable constant_">CPU</span> 内存</span><br><span class="line"><span class="comment">// const fs = require(&#x27;fs&#x27;);</span></span><br><span class="line"><span class="comment">// Buffer.alloc(1001)</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">memoryUsage</span>());</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">rss</span>: <span class="number">31047680</span>, <span class="comment">// 常驻内存</span></span><br><span class="line">  <span class="attr">heapTotal</span>: <span class="number">6434816</span>, <span class="comment">// 申请的总内存大小</span></span><br><span class="line">  <span class="attr">heapUsed</span>: <span class="number">5687912</span>, <span class="comment">// 使用内存</span></span><br><span class="line">  <span class="attr">external</span>: <span class="number">422438</span>,  <span class="comment">// 底层核心模块占据内存大小</span></span><br><span class="line">  <span class="attr">arrayBuffers</span>: <span class="number">17606</span> <span class="comment">// 独立空间大小(缓冲区)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">cpuUsage</span>());</span><br><span class="line"><span class="comment">//用户 系统</span></span><br><span class="line">&#123; <span class="attr">user</span>: <span class="number">15000</span>, <span class="attr">system</span>: <span class="number">46000</span> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>运行环境： 运行目录 node环境 cpu架构 用户环境 系统平台</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行目录</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">cwd</span>());</span><br><span class="line"></span><br><span class="line"><span class="comment">// node环境</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">version</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">versions</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// cpu架构</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">arch</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户环境</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">NODE_ENV</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">PATH</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户管理员目录</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">USERPROFILE</span>); <span class="comment">//HOME</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 系统平台</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">NODE_ENV</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">platform</span>);</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>运行状态： 启动参数、<span class="variable constant_">PID</span>、运行时间</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">argv</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">argv0</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">exeArgv</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">pid</span>);  <span class="comment">// | ppid</span></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">uptime</span>());</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123; <span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">uptime</span>()) &#125;, <span class="number">3000</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>事件监听</span><br><span class="line"></span><br><span class="line">process.<span class="title function_">on</span>(<span class="string">&#x27;exit&#x27;</span>, <span class="function">(<span class="params">code</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 只支持同步代码</span></span><br><span class="line"></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;exit &#x27;</span> + code);</span><br><span class="line"></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="title function_">on</span>(<span class="string">&#x27;beforeExit&#x27;</span>, <span class="function">(<span class="params">code</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 支持异步代码</span></span><br><span class="line"></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;beforeExit &#x27;</span> + code);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 需要注意的是，在 beforeExit 中执行的异步操作可能会导致 Node.js 进程无法正常退出，因此应该尽量避免在 beforeExit 中执行长时间运行的异步操作。</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// setTimeout(() =&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//   console.log(&#x27;before exit !!!&#x27;);</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// &#125;, 1000)</span></span><br><span class="line"></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;executed&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="title function_">exit</span>();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">5.</span>标准输入 输出 错误</span><br><span class="line"></span><br><span class="line"><span class="comment">/* console.log = function (data) &#123;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  // process.stdout 返回流</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  process.stdout.write(&#x27;---&#x27; + data + &#x27;\n&#x27;);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  </span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">console.log(11);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">console.log(22); */</span></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"> <span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line">fs.<span class="title function_">createReadStream</span>(<span class="string">&#x27;test.txt&#x27;</span>)</span><br><span class="line"></span><br><span class="line">  .<span class="title function_">pipe</span>(process.<span class="property">stdout</span>) </span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="property">stdin</span>.<span class="title function_">pipe</span>(process.<span class="property">stdout</span>)</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="property">stdin</span>.<span class="title function_">setEncoding</span>(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">process.<span class="property">stdin</span>.<span class="title function_">on</span>(<span class="string">&#x27;readable&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> chunk = process.<span class="property">stdin</span>.<span class="title function_">read</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (chunk !== <span class="literal">null</span>) &#123;</span><br><span class="line"></span><br><span class="line">    process.<span class="property">stdout</span>.<span class="title function_">write</span>(<span class="string">&#x27;data &#x27;</span> + chunk);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="path"><a href="#path" class="headerlink" title="path"></a>path</h3><p><code>basename()</code> 获取路径中基础名称<br><code>dirname()</code> 获取路径中的目录名称<br><code>extname()</code> 获取路径中的扩展名称<br><code>isAbsolute()</code> 获取路径是否为绝对路径<br><code>join()</code> 拼接多个路径片段<br><code>resolve()</code> 返回绝对路径<br><code>pasre()</code> 解析路径<br><code>format()</code> 序列化路径<br><code>normalize()</code> 规范化路径</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://jamisondong.github.io">Jamsion Dong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://jamisondong.github.io/2025/02/21/NodeJS/">https://jamisondong.github.io/2025/02/21/NodeJS/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://jamisondong.github.io" target="_blank">Jamison's blogs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/NodeJS/">NodeJS</a></div><div class="post-share"><div class="social-share" data-image="https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/02/21/JS%E4%B8%AD%E7%9A%84%20!%20%E5%92%8C%20!!%20%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E7%94%A8%E6%B3%95/" title="JavaScript如何工作"><img class="cover" src="https://s2.loli.net/2023/03/02/6g9UT5S4D8pVXdF.jpg" onerror="onerror=null;src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">JavaScript如何工作</div></div><div class="info-2"><div class="info-item-1">js中!的用法是比较灵活的，它除了做逻辑运算常常会用！做类型判断，可以用！与上对象来求得一个布尔值， 1、！可将变量转换成boolean类型，null、undefined和空字符串取反都为true其余都为false。  !null&#x3D;true  !undefined&#x3D;true  !’’&#x3D;true  !100&#x3D;false  !’abc’&#x3D;false 2、！！常常用来做类型判断，在第一步!（变量）之后再做逻辑取反运算，在js中新手常常会写这样臃肿的代码： 判断变量a为非空，未定义或者非空串才能执行方法体的内容 var a; if(a!&#x3D;null&amp;&amp;typeof(a)!&#x3D;undefined&amp;&amp;a!&#x3D;’’){     &#x2F;&#x2F;a有内容才执行的代码  } 实际上我们只需要写一个判断表达： if(!!a){    ...</div></div></div></a><a class="pagination-related" href="/2025/02/21/VSCode%20Chrome%20Debugger/" title="谷歌调试"><img class="cover" src="https://s2.loli.net/2023/03/02/OL6ufhMc9xiP7Qa.png" onerror="onerror=null;src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">谷歌调试</div></div><div class="info-2"><div class="info-item-1"> launch：调试模式启动浏览器，访问某个 url，然后连上进行调试 attach：连接某个已经在调试模式启动的 url 进行调试 userDataDir： user data dir 是保存用户数据的地方，比如浏览历史、cookie 等，一个数据目录只能跑一个 chrome，所以默认会创建临时用户数据目录，想用默认的目录可以把这个配置设为 false runtimeExecutable：切换调试用的浏览器，可以是 stable、canary 或者自定义的 runtimeArgs：启动浏览器的时候传递的启动参数 sourceMapPathOverrides：对 sourcemap 到的文件路径做一次映射，映射到 VSCode workspace 下的文件，这样调试的文件就可以修改了 file：可以直接指定某个文件，然后启动调试1234567891011121314151617181920212223242526272829303132333435363738394041&#123;  // Use IntelliSense to learn about possible...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div class="comment-switch"><span class="first-comment">Valine</span><span id="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Jamsion Dong</div><div class="author-info-description">没有谁是一座孤岛，每个人都是陆地的一部分</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS%E6%9E%B6%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">NodeJS架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#libuv"><span class="toc-number">1.1.</span> <span class="toc-text">libuv</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.2.</span> <span class="toc-text">node事件循环</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS%E7%89%B9%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">NodeJS特点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%8D%95%E7%BA%BF%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">NodeJS主线程单线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E6%9B%B4%E9%80%82%E5%90%88IO%E5%AF%86%E9%9B%86%E5%9E%8B%E7%9A%84%E9%AB%98%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82"><span class="toc-number">2.2.</span> <span class="toc-text">NodeJS更适合IO密集型的高并发请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E4%BD%9C%E4%B8%BA%E4%B8%AD%E9%97%B4%E5%B1%82"><span class="toc-number">2.3.</span> <span class="toc-text">NodeJS作为中间层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">常见全局变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#process"><span class="toc-number">3.1.</span> <span class="toc-text">process</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#path"><span class="toc-number">3.2.</span> <span class="toc-text">path</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/2025-2-21-%E5%A2%9E%E9%87%8F%E5%8F%91%E5%B8%83/" title="2025-2-21-增量编译"><img src="https://s2.loli.net/2023/03/02/SxPosgAQ4OqhGru.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="2025-2-21-增量编译"/></a><div class="content"><a class="title" href="/2025/02/21/2025-2-21-%E5%A2%9E%E9%87%8F%E5%8F%91%E5%B8%83/" title="2025-2-21-增量编译">2025-2-21-增量编译</a><time datetime="2025-02-21T14:55:35.000Z" title="发表于 2025-02-21 22:55:35">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/2025-2-21-AICoding-restart/" title="AICoding，重启我的blog"><img src="https://s2.loli.net/2023/03/02/mXSBqD5b7zTJIZx.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="AICoding，重启我的blog"/></a><div class="content"><a class="title" href="/2025/02/21/2025-2-21-AICoding-restart/" title="AICoding，重启我的blog">AICoding，重启我的blog</a><time datetime="2025-02-21T14:50:13.000Z" title="发表于 2025-02-21 22:50:13">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/JS%E4%B8%AD%E7%9A%84%20!%20%E5%92%8C%20!!%20%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E7%94%A8%E6%B3%95/" title="JavaScript如何工作"><img src="https://s2.loli.net/2023/03/02/6g9UT5S4D8pVXdF.jpg" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="JavaScript如何工作"/></a><div class="content"><a class="title" href="/2025/02/21/JS%E4%B8%AD%E7%9A%84%20!%20%E5%92%8C%20!!%20%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E7%94%A8%E6%B3%95/" title="JavaScript如何工作">JavaScript如何工作</a><time datetime="2025-02-21T14:39:45.115Z" title="发表于 2025-02-21 22:39:45">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/NodeJS/" title="NodeJS"><img src="https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="NodeJS"/></a><div class="content"><a class="title" href="/2025/02/21/NodeJS/" title="NodeJS">NodeJS</a><time datetime="2025-02-21T14:39:45.115Z" title="发表于 2025-02-21 22:39:45">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/VSCode%20Chrome%20Debugger/" title="谷歌调试"><img src="https://s2.loli.net/2023/03/02/OL6ufhMc9xiP7Qa.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="谷歌调试"/></a><div class="content"><a class="title" href="/2025/02/21/VSCode%20Chrome%20Debugger/" title="谷歌调试">谷歌调试</a><time datetime="2025-02-21T14:39:45.115Z" title="发表于 2025-02-21 22:39:45">2025-02-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By Jamsion Dong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const initValine = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyValine = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const valineConfig = {
+      el: '#vcomment',
+      appId: '',
+      appKey: '',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      visitor: false,
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || window.location.pathname
+    }
+
+    new Valine(valineConfig)
+  }
+
+  const loadValine = async (el, path) => {
+    if (typeof Valine === 'function') {
+      initValine(el, path)
+    } else {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js')
+      initValine(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Valine' === 'Valine'
+      ? window.shuoshuoComment = { loadComment: loadValine }
+      : window.loadOtherComment = loadValine
+    return
+  }
+
+  if ('Valine' === 'Valine' || !false) {
+    if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+    else setTimeout(loadValine, 0)
+  } else {
+    window.loadOtherComment = loadValine
+  }
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+
+  const disqusReset = conf => {
+    window.DISQUS && window.DISQUS.reset({
+      reload: true,
+      config: conf
+    })
+  }
+
+  const loadDisqus = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyDisqus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    window.disqus_identifier = isShuoshuo ? path : '/2025/02/21/NodeJS/'
+    window.disqus_url = isShuoshuo ? location.origin + path : 'https://jamisondong.github.io/2025/02/21/NodeJS/'
+
+    const disqus_config = function () {
+      this.page.url = disqus_url
+      this.page.identifier = disqus_identifier
+      this.page.title = 'NodeJS'
+    }
+
+    if (window.DISQUS) disqusReset(disqus_config)
+    else {
+      const script = document.createElement('script')
+      script.src = 'https://.disqus.com/embed.js'
+      script.setAttribute('data-timestamp', +new Date())
+      document.head.appendChild(script)
+    }
+
+    btf.addGlobalFn('themeChange', () => disqusReset(disqus_config), 'disqus')
+  }
+
+  const getCount = async() => {
+    try {
+      const eleGroup = document.querySelector('#post-meta .disqus-comment-count')
+      if (!eleGroup) return
+      const cleanedLinks = eleGroup.href.replace(/#post-comment$/, '')
+
+      const res = await fetch(`https://disqus.com/api/3.0/threads/set.json?forum=&api_key=&thread:link=${cleanedLinks}`,{
+        method: 'GET'
+      })
+      const result = await res.json()
+
+      const count = result.response.length ? result.response[0].posts : 0
+      eleGroup.textContent = count
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Valine' === 'Disqus'
+      ? window.shuoshuoComment = { loadComment: loadDisqus }
+      : window.loadOtherComment = loadDisqus
+    return
+  }
+
+  if ('Valine' === 'Disqus' || !false) {
+    if (false) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+    else {
+      loadDisqus()
+      
+    }
+  } else {
+    window.loadOtherComment = loadDisqus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

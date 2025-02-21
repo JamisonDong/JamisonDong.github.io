@@ -1,0 +1,308 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Vue2Study(五) | Jamison's blogs</title><meta name="author" content="Jamsion Dong"><meta name="copyright" content="Jamsion Dong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="14.过渡&amp;动画1.过渡的类名 2.CSS动画1234567891011121314151617.bounce-enter-active &#123;  animation: bounce-in .5s;&#125;.bounce-leave-active &#123;  animation: bounce-in .5s reverse;&#125;@keyframes bounce-in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue2Study(五)">
+<meta property="og:url" content="https://jamisondong.github.io/2023/07/08/Vue2Study_5/index.html">
+<meta property="og:site_name" content="Jamison&#39;s blogs">
+<meta property="og:description" content="14.过渡&amp;动画1.过渡的类名 2.CSS动画1234567891011121314151617.bounce-enter-active &#123;  animation: bounce-in .5s;&#125;.bounce-leave-active &#123;  animation: bounce-in .5s reverse;&#125;@keyframes bounce-in">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/03/02/mXSBqD5b7zTJIZx.png">
+<meta property="article:published_time" content="2023-07-08T04:17:39.544Z">
+<meta property="article:modified_time" content="2023-07-08T04:17:39.544Z">
+<meta property="article:author" content="Jamsion Dong">
+<meta property="article:tag" content="Vue2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/03/02/mXSBqD5b7zTJIZx.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Vue2Study(五)",
+  "url": "https://jamisondong.github.io/2023/07/08/Vue2Study_5/",
+  "image": "https://s2.loli.net/2023/03/02/mXSBqD5b7zTJIZx.png",
+  "datePublished": "2023-07-08T04:17:39.544Z",
+  "dateModified": "2023-07-08T04:17:39.544Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Jamsion Dong",
+      "url": "https://jamisondong.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamisondong.github.io/2023/07/08/Vue2Study_5/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Vue2Study(五)',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://s2.loli.net/2023/03/02/mXSBqD5b7zTJIZx.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Jamison's blogs</span></a><a class="nav-page-title" href="/"><span class="site-name">Vue2Study(五)</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Vue2Study(五)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-08T04:17:39.544Z" title="发表于 2023-07-08 12:17:39">2023-07-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-07-08T04:17:39.544Z" title="更新于 2023-07-08 12:17:39">2023-07-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/">前端框架</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">412</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>1分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="14-过渡-动画"><a href="#14-过渡-动画" class="headerlink" title="14.过渡&amp;动画"></a>14.过渡&amp;动画</h1><h4 id="1-过渡的类名"><a href="#1-过渡的类名" class="headerlink" title="1.过渡的类名"></a>1.过渡的类名</h4><p><img src="https://v2.cn.vuejs.org/images/transition.png" alt="Transition Diagram"></p>
+<h4 id="2-CSS动画"><a href="#2-CSS动画" class="headerlink" title="2.CSS动画"></a>2.CSS动画</h4><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.bounce-enter-active</span> &#123;</span><br><span class="line">  <span class="attribute">animation</span>: bounce-in .<span class="number">5s</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.bounce-leave-active</span> &#123;</span><br><span class="line">  <span class="attribute">animation</span>: bounce-in .<span class="number">5s</span> reverse;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@keyframes</span> bounce-in &#123;</span><br><span class="line">  <span class="number">0%</span> &#123;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="number">50%</span> &#123;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">1.5</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="number">100%</span> &#123;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="15-可复用性-组合"><a href="#15-可复用性-组合" class="headerlink" title="15.可复用性&amp;组合"></a>15.可复用性&amp;组合</h1><ol>
+<li><h4 id="混入"><a href="#混入" class="headerlink" title="混入"></a>混入</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个混入对象</span></span><br><span class="line"><span class="keyword">var</span> myMixin = &#123;</span><br><span class="line">  <span class="attr">created</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="title function_">hello</span>()</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">methods</span>: &#123;</span><br><span class="line">    <span class="attr">hello</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;hello from mixin!&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个使用混入对象的组件</span></span><br><span class="line"><span class="keyword">var</span> <span class="title class_">Component</span> = <span class="title class_">Vue</span>.<span class="title function_">extend</span>(&#123;</span><br><span class="line">  <span class="attr">mixins</span>: [myMixin]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> component = <span class="keyword">new</span> <span class="title class_">Component</span>() <span class="comment">// =&gt; &quot;hello from mixin!&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><h3 id="自定义指令"><a href="#自定义指令" class="headerlink" title="自定义指令"></a>自定义指令</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注册一个全局自定义指令 `v-focus`</span></span><br><span class="line"><span class="title class_">Vue</span>.<span class="title function_">directive</span>(<span class="string">&#x27;focus&#x27;</span>, &#123;</span><br><span class="line">  <span class="comment">// 当被绑定的元素插入到 DOM 中时……</span></span><br><span class="line">  <span class="attr">inserted</span>: <span class="keyword">function</span> (<span class="params">el</span>) &#123;</span><br><span class="line">    <span class="comment">// 聚焦元素</span></span><br><span class="line">    el.<span class="title function_">focus</span>()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">//注册局部指令</span></span><br><span class="line"><span class="attr">directives</span>: &#123;</span><br><span class="line">  <span class="attr">focus</span>: &#123;</span><br><span class="line">    <span class="comment">// 指令的定义</span></span><br><span class="line">    <span class="attr">inserted</span>: <span class="keyword">function</span> (<span class="params">el</span>) &#123;</span><br><span class="line">      el.<span class="title function_">focus</span>()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h2 id="钩子函数"><a href="#钩子函数" class="headerlink" title="钩子函数"></a><a target="_blank" rel="noopener" href="https://v2.cn.vuejs.org/v2/guide/custom-directive.html#%E9%92%A9%E5%AD%90%E5%87%BD%E6%95%B0">钩子函数</a></h2><p>一个指令定义对象可以提供如下几个钩子函数 (均为可选)：</p>
+<ul>
+<li><code>bind</code>：只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。</li>
+<li><code>inserted</code>：被绑定元素插入父节点时调用 (仅保证父节点存在，但不一定已被插入文档中)。</li>
+<li><code>update</code>：所在组件的 VNode 更新时调用，<strong>但是可能发生在其子 VNode 更新之前</strong>。指令的值可能发生了改变，也可能没有。但是你可以通过比较更新前后的值来忽略不必要的模板更新</li>
+<li><code>componentUpdated</code>：指令所在组件的 VNode <strong>及其子 VNode</strong> 全部更新后调用。</li>
+<li><code>unbind</code>：只调用一次，指令与元素解绑时调用。</li>
+</ul>
+</li>
+</ol>
+<h1 id="响应式原理"><a href="#响应式原理" class="headerlink" title="响应式原理"></a>响应式原理</h1><p><img src="https://v2.cn.vuejs.org/images/data.png" alt="data"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://jamisondong.github.io">Jamsion Dong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://jamisondong.github.io/2023/07/08/Vue2Study_5/">https://jamisondong.github.io/2023/07/08/Vue2Study_5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://jamisondong.github.io" target="_blank">Jamison's blogs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Vue2/">Vue2</a></div><div class="post-share"><div class="social-share" data-image="https://s2.loli.net/2023/03/02/mXSBqD5b7zTJIZx.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/07/08/Vue2Study_4/" title="Vue2Study(四)"><img class="cover" src="https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png" onerror="onerror=null;src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Vue2Study(四)</div></div><div class="info-2"><div class="info-item-1">13.深入了解组件1.Prop1.Prop大小写 浏览器对大小写不敏感，统一转换成小写  camelCase (驼峰命名法) 的 prop 名需要使用其等价的 kebab-case (短横线分隔命名) 命名： 12345678&lt;!-- 在 HTML 中是 kebab-case 的 --&gt;&lt;blog-post post-title=&quot;hello!&quot;&gt;&lt;/blog-post&gt;Vue.component(&#x27;blog-post&#x27;, &#123;  // 在 JavaScript 中是 camelCase 的  props: [&#x27;postTitle&#x27;],  template: &#x27;&lt;h3&gt;&#123;&#123; postTitle...</div></div></div></a><a class="pagination-related" href="/2023/07/08/Vue%E5%93%8D%E5%BA%94%E5%BC%8F/" title="Vue响应式"><img class="cover" src="https://s2.loli.net/2023/03/02/OL6ufhMc9xiP7Qa.png" onerror="onerror=null;src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Vue响应式</div></div><div class="info-2"><div class="info-item-1">0.为什么Vue3的响应式优于Vue2? Vue2的响应式基于OPbject.defineProperty实现 Vue3的响应式基于ES6的Proxy实现  1.Vue21234567891011121314151617181920212223242526272829// 响应式函数function reactive(obj, key, value) &#123;  Object.defineProperty(data, key, &#123;    get() &#123;      console.log(`访问了$&#123;key&#125;属性`)      return value    &#125;,    set(val) &#123;      console.log(`将$&#123;key&#125;由-&gt;$&#123;value&#125;-&gt;设置成-&gt;$&#123;val&#125;`)      if (value !== val) &#123;        value = val      &#125;    &#125; ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2023/07/08/Vue2Study_1/" title="Vue2Study(一)"><img class="cover" src="https://s2.loli.net/2023/03/02/SxPosgAQ4OqhGru.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-08</div><div class="info-item-2">Vue2Study(一)</div></div><div class="info-2"><div class="info-item-1">1.与React对比相似之处 Virtual DOM 提供了响应式(Reactive)和组件化（Composable）的视图组件 将注意力集中保持在核心库，而将其他功能如路由和全局状态管理交给相关的库。  不同之处 React拥有更丰富的生态系统 Vue渲染过程自动追踪，每个组件自动获得了shouldComponentUpdate React使用JSX Vue推荐模板。 对比来说，前者优点在于开发工具支持好，开发语言单一高效；后者使得基于HTML的模板迁移更容易，开发效率在一定条件下也有提升。  CSS方面 CSS 作用域在 React 中是通过 CSS-in-JS 的方案实现 Vue 设置样式的默认方法是单文件组件里类似&lt;style scoped&gt;的标签。 Vue 的单文件组件里的样式设置是非常灵活的。通过vue-loader，你可以使用任意预处理器、后处理器，甚至深度集成CSS Modules——全部都在&lt;style&gt;标签内。  扩展方面 脚手架层面Vue...</div></div></div></a><a class="pagination-related" href="/2023/07/08/Vue2Study_2/" title="Vue2Study(二)"><img class="cover" src="https://s2.loli.net/2023/03/02/TurbyMmDY89ocJH.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-08</div><div class="info-item-2">Vue2Study(二)</div></div><div class="info-2"><div class="info-item-1">8.条件渲染 v-if 支持’‘  v-show 不支持’‘  元素始终会被渲染并保留在 DOM 中  v-if vs v-show  v-if 是“真正”的条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。 v-if 也是惰性的：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块。 相比之下，v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。 一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。   当 v-if 与 v-for 一起使用时，v-for 具有比 v-if 更高的优先级  当你只想为部分项渲染节点时很适用  有条件跳过循环 123456789101112#部分项渲染节点&lt;li v-for=&quot;todo in todos&quot;...</div></div></div></a><a class="pagination-related" href="/2023/07/08/Vue2Study_3/" title="Vue2Study(三)"><img class="cover" src="https://s2.loli.net/2023/03/02/5XKYiOzHg3doqun.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-08</div><div class="info-item-2">Vue2Study(三)</div></div><div class="info-2"><div class="info-item-1">11.表单输入绑定 v-model 会忽略所有表单元素的 value、checked、selected attribute 的初始值而总是将 Vue 实例的数据作为数据来源。你应该通过 JavaScript 在组件的 data 选项中声明初始值。  v-model 在内部为不同的输入元素使用不同的 property 并抛出不同的事件：  text 和 textarea 元素使用 value property 和 input 事件； checkbox 和 radio 使用 checked property 和 change 事件； select 字段将 value 作为 prop 并将 change 作为事件。  修饰符 .lazy 在 change 事件_之后_进行同步 .number 将用户的输入值转为数值类型 .trim 自动过滤用户输入的首尾空白字符  12.组件基础1.一个组件的 data 选项必须是一个函数因此每个实例可以维护一份被返回对象的独立的拷贝： 12345data: function () &#123;  return &#123;    count: 0 ...</div></div></div></a><a class="pagination-related" href="/2023/07/08/Vue2Study_4/" title="Vue2Study(四)"><img class="cover" src="https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-08</div><div class="info-item-2">Vue2Study(四)</div></div><div class="info-2"><div class="info-item-1">13.深入了解组件1.Prop1.Prop大小写 浏览器对大小写不敏感，统一转换成小写  camelCase (驼峰命名法) 的 prop 名需要使用其等价的 kebab-case (短横线分隔命名) 命名： 12345678&lt;!-- 在 HTML 中是 kebab-case 的 --&gt;&lt;blog-post post-title=&quot;hello!&quot;&gt;&lt;/blog-post&gt;Vue.component(&#x27;blog-post&#x27;, &#123;  // 在 JavaScript 中是 camelCase 的  props: [&#x27;postTitle&#x27;],  template: &#x27;&lt;h3&gt;&#123;&#123; postTitle...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div class="comment-switch"><span class="first-comment">Valine</span><span id="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Jamsion Dong</div><div class="author-info-description">没有谁是一座孤岛，每个人都是陆地的一部分</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#14-%E8%BF%87%E6%B8%A1-%E5%8A%A8%E7%94%BB"><span class="toc-number">1.</span> <span class="toc-text">14.过渡&amp;动画</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%BF%87%E6%B8%A1%E7%9A%84%E7%B1%BB%E5%90%8D"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">1.过渡的类名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-CSS%E5%8A%A8%E7%94%BB"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">2.CSS动画</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#15-%E5%8F%AF%E5%A4%8D%E7%94%A8%E6%80%A7-%E7%BB%84%E5%90%88"><span class="toc-number">2.</span> <span class="toc-text">15.可复用性&amp;组合</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%B7%E5%85%A5"><span class="toc-number">2.0.0.1.</span> <span class="toc-text">混入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8C%87%E4%BB%A4"><span class="toc-number">2.0.1.</span> <span class="toc-text">自定义指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%92%A9%E5%AD%90%E5%87%BD%E6%95%B0"><span class="toc-number">2.1.</span> <span class="toc-text">钩子函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">响应式原理</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/2025-2-21-%E5%A2%9E%E9%87%8F%E5%8F%91%E5%B8%83/" title="2025-2-21-增量编译"><img src="https://s2.loli.net/2023/03/02/SxPosgAQ4OqhGru.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="2025-2-21-增量编译"/></a><div class="content"><a class="title" href="/2025/02/21/2025-2-21-%E5%A2%9E%E9%87%8F%E5%8F%91%E5%B8%83/" title="2025-2-21-增量编译">2025-2-21-增量编译</a><time datetime="2025-02-21T14:55:35.000Z" title="发表于 2025-02-21 22:55:35">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/2025-2-21-AICoding-restart/" title="AICoding，重启我的blog"><img src="https://s2.loli.net/2023/03/02/mXSBqD5b7zTJIZx.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="AICoding，重启我的blog"/></a><div class="content"><a class="title" href="/2025/02/21/2025-2-21-AICoding-restart/" title="AICoding，重启我的blog">AICoding，重启我的blog</a><time datetime="2025-02-21T14:50:13.000Z" title="发表于 2025-02-21 22:50:13">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/JS%E4%B8%AD%E7%9A%84%20!%20%E5%92%8C%20!!%20%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E7%94%A8%E6%B3%95/" title="JavaScript如何工作"><img src="https://s2.loli.net/2023/03/02/6g9UT5S4D8pVXdF.jpg" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="JavaScript如何工作"/></a><div class="content"><a class="title" href="/2025/02/21/JS%E4%B8%AD%E7%9A%84%20!%20%E5%92%8C%20!!%20%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E7%94%A8%E6%B3%95/" title="JavaScript如何工作">JavaScript如何工作</a><time datetime="2025-02-21T14:39:45.115Z" title="发表于 2025-02-21 22:39:45">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/NodeJS/" title="NodeJS"><img src="https://s2.loli.net/2023/03/02/sSEkrecJWVDNIiG.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="NodeJS"/></a><div class="content"><a class="title" href="/2025/02/21/NodeJS/" title="NodeJS">NodeJS</a><time datetime="2025-02-21T14:39:45.115Z" title="发表于 2025-02-21 22:39:45">2025-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/21/VSCode%20Chrome%20Debugger/" title="谷歌调试"><img src="https://s2.loli.net/2023/03/02/OL6ufhMc9xiP7Qa.png" onerror="this.onerror=null;this.src='https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg'" alt="谷歌调试"/></a><div class="content"><a class="title" href="/2025/02/21/VSCode%20Chrome%20Debugger/" title="谷歌调试">谷歌调试</a><time datetime="2025-02-21T14:39:45.115Z" title="发表于 2025-02-21 22:39:45">2025-02-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By Jamsion Dong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const initValine = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyValine = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const valineConfig = {
+      el: '#vcomment',
+      appId: '',
+      appKey: '',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      visitor: false,
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || window.location.pathname
+    }
+
+    new Valine(valineConfig)
+  }
+
+  const loadValine = async (el, path) => {
+    if (typeof Valine === 'function') {
+      initValine(el, path)
+    } else {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js')
+      initValine(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Valine' === 'Valine'
+      ? window.shuoshuoComment = { loadComment: loadValine }
+      : window.loadOtherComment = loadValine
+    return
+  }
+
+  if ('Valine' === 'Valine' || !false) {
+    if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+    else setTimeout(loadValine, 0)
+  } else {
+    window.loadOtherComment = loadValine
+  }
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+
+  const disqusReset = conf => {
+    window.DISQUS && window.DISQUS.reset({
+      reload: true,
+      config: conf
+    })
+  }
+
+  const loadDisqus = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyDisqus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    window.disqus_identifier = isShuoshuo ? path : '/2023/07/08/Vue2Study_5/'
+    window.disqus_url = isShuoshuo ? location.origin + path : 'https://jamisondong.github.io/2023/07/08/Vue2Study_5/'
+
+    const disqus_config = function () {
+      this.page.url = disqus_url
+      this.page.identifier = disqus_identifier
+      this.page.title = 'Vue2Study(五)'
+    }
+
+    if (window.DISQUS) disqusReset(disqus_config)
+    else {
+      const script = document.createElement('script')
+      script.src = 'https://.disqus.com/embed.js'
+      script.setAttribute('data-timestamp', +new Date())
+      document.head.appendChild(script)
+    }
+
+    btf.addGlobalFn('themeChange', () => disqusReset(disqus_config), 'disqus')
+  }
+
+  const getCount = async() => {
+    try {
+      const eleGroup = document.querySelector('#post-meta .disqus-comment-count')
+      if (!eleGroup) return
+      const cleanedLinks = eleGroup.href.replace(/#post-comment$/, '')
+
+      const res = await fetch(`https://disqus.com/api/3.0/threads/set.json?forum=&api_key=&thread:link=${cleanedLinks}`,{
+        method: 'GET'
+      })
+      const result = await res.json()
+
+      const count = result.response.length ? result.response[0].posts : 0
+      eleGroup.textContent = count
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Valine' === 'Disqus'
+      ? window.shuoshuoComment = { loadComment: loadDisqus }
+      : window.loadOtherComment = loadDisqus
+    return
+  }
+
+  if ('Valine' === 'Disqus' || !false) {
+    if (false) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+    else {
+      loadDisqus()
+      
+    }
+  } else {
+    window.loadOtherComment = loadDisqus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
