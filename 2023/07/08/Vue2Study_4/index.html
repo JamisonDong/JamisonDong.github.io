@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="13.深入了解组件1.Prop1.Prop大小写 浏览器对大小写不敏感，统一转换成小写  camelCase (驼峰命名法) 的 prop 名需要使用其等价的 kebab-case (短横线分隔命名) 命名： 12345678&lt;!-- 在 HTML 中是 kebab-case 的 --&gt;&lt;blog-post post-title&#x3D;&quot;hello!&quot;&gt;&amp;lt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue2Study(四)">
+<meta property="og:url" content="https://jamisondong.github.io/2023/07/08/Vue2Study_4/index.html">
+<meta property="og:site_name" content="Jamison&#39;s blogs">
+<meta property="og:description" content="13.深入了解组件1.Prop1.Prop大小写 浏览器对大小写不敏感，统一转换成小写  camelCase (驼峰命名法) 的 prop 名需要使用其等价的 kebab-case (短横线分隔命名) 命名： 12345678&lt;!-- 在 HTML 中是 kebab-case 的 --&gt;&lt;blog-post post-title&#x3D;&quot;hello!&quot;&gt;&amp;lt">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-08T04:17:39.000Z">
+<meta property="article:modified_time" content="2026-01-30T12:30:29.372Z">
+<meta property="article:author" content="Jamsion Dong">
+<meta property="article:tag" content="Vue2">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Vue2Study(四)</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="../../../../css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="../Vue2Study_3/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="../Vue2Study_5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jamisondong.github.io/2023/07/08/Vue2Study_4/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&text=Vue2Study(四)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&is_video=false&description=Vue2Study(四)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Vue2Study(四)&body=Check out this article: https://jamisondong.github.io/2023/07/08/Vue2Study_4/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&name=Vue2Study(四)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&t=Vue2Study(四)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3%E7%BB%84%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">13.深入了解组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Prop"><span class="toc-number">1.1.</span> <span class="toc-text">1.Prop</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Prop%E5%A4%A7%E5%B0%8F%E5%86%99"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.Prop大小写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Prop%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.1.2.</span> <span class="toc-text">2.Prop类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BC%A0%E5%85%A5%E9%9D%99%E6%80%81%E6%88%96%E5%8A%A8%E6%80%81Prop"><span class="toc-number">1.1.3.</span> <span class="toc-text">3.传入静态或动态Prop</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8D%95%E9%A1%B9%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="toc-number">1.1.4.</span> <span class="toc-text">4.单项数据流</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-Prop%E9%AA%8C%E8%AF%81"><span class="toc-number">1.1.5.</span> <span class="toc-text">5.Prop验证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E9%9D%9Eprop%E7%9A%84attribute"><span class="toc-number">1.1.6.</span> <span class="toc-text">6.非prop的attribute</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">2.自定义组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%A7%8B%E7%BB%88%E4%BD%BF%E7%94%A8kebab-case%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%90%8D"><span class="toc-number">1.2.1.</span> <span class="toc-text">推荐始终使用kebab-case的事件名</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8A%A8%E6%80%81%E7%BB%84%E4%BB%B6-%E5%BC%82%E6%AD%A5%E7%BB%84%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">4.动态组件&amp;异步组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%84%E7%90%86%E8%BE%B9%E7%95%8C%E6%83%85%E5%86%B5"><span class="toc-number">1.4.</span> <span class="toc-text">5.处理边界情况</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Vue2Study(四)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jamsion Dong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-07-08T04:17:39.000Z" class="dt-published" itemprop="datePublished">2023-07-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="../../../../categories/%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/">前端框架</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="../../../../tags/Vue2/" rel="tag">Vue2</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="13-深入了解组件"><a href="#13-深入了解组件" class="headerlink" title="13.深入了解组件"></a>13.深入了解组件</h2><h3 id="1-Prop"><a href="#1-Prop" class="headerlink" title="1.Prop"></a>1.Prop</h3><h4 id="1-Prop大小写"><a href="#1-Prop大小写" class="headerlink" title="1.Prop大小写"></a>1.Prop大小写</h4><ul>
+<li><p>浏览器对大小写不敏感，统一转换成小写</p>
+</li>
+<li><p>camelCase (驼峰命名法) 的 prop 名需要使用其等价的 kebab-case (短横线分隔命名) 命名：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 在 <span class="variable constant_">HTML</span> 中是 kebab-<span class="keyword">case</span> 的 --&gt;</span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">blog-post</span> <span class="attr">post-title</span>=<span class="string">&quot;hello!&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">blog-post</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="title class_">Vue</span>.<span class="title function_">component</span>(<span class="string">&#x27;blog-post&#x27;</span>, &#123;</span><br><span class="line">  <span class="comment">// 在 JavaScript 中是 camelCase 的</span></span><br><span class="line">  <span class="attr">props</span>: [<span class="string">&#x27;postTitle&#x27;</span>],</span><br><span class="line">  <span class="attr">template</span>: <span class="string">&#x27;&lt;h3&gt;&#123;&#123; postTitle &#125;&#125;&lt;/h3&gt;&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用字符串模板，那么这个限制就不存在</p>
+</li>
+</ul>
+<h4 id="2-Prop类型"><a href="#2-Prop类型" class="headerlink" title="2.Prop类型"></a>2.Prop类型</h4><h4 id="3-传入静态或动态Prop"><a href="#3-传入静态或动态Prop" class="headerlink" title="3.传入静态或动态Prop"></a>3.传入静态或动态Prop</h4><h4 id="4-单项数据流"><a href="#4-单项数据流" class="headerlink" title="4.单项数据流"></a>4.单项数据流</h4><h4 id="5-Prop验证"><a href="#5-Prop验证" class="headerlink" title="5.Prop验证"></a>5.Prop验证</h4><h4 id="6-非prop的attribute"><a href="#6-非prop的attribute" class="headerlink" title="6.非prop的attribute"></a>6.非prop的attribute</h4><ul>
+<li>替换&#x2F;合并已有的attribute</li>
+<li>禁用attribute   <code>inheritAttrs: false</code></li>
+</ul>
+<h3 id="2-自定义组件"><a href="#2-自定义组件" class="headerlink" title="2.自定义组件"></a>2.自定义组件</h3><blockquote>
+<h4 id="推荐始终使用kebab-case的事件名"><a href="#推荐始终使用kebab-case的事件名" class="headerlink" title="推荐始终使用kebab-case的事件名"></a>推荐始终使用kebab-case的事件名</h4></blockquote>
+<ul>
+<li><p>v-model</p>
+<p>一个组件上的 <code>v-model</code> 默认会利用名为 <code>value</code> 的 prop 和名为 <code>input</code> 的事件，但是像单选框、复选框等类型的输入控件可能会将 <code>value</code> attribute 用于<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value">不同的目的</a>。<code>model</code> 选项可以用来避免这样的冲突：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Vue</span>.<span class="title function_">component</span>(<span class="string">&#x27;base-checkbox&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">model</span>: &#123;</span><br><span class="line">    <span class="attr">prop</span>: <span class="string">&#x27;checked&#x27;</span>,</span><br><span class="line">    <span class="attr">event</span>: <span class="string">&#x27;change&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">props</span>: &#123;</span><br><span class="line">    <span class="attr">checked</span>: <span class="title class_">Boolean</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;input</span></span><br><span class="line"><span class="string">      type=&quot;checkbox&quot;</span></span><br><span class="line"><span class="string">      v-bind:checked=&quot;checked&quot;</span></span><br><span class="line"><span class="string">      v-on:change=&quot;$emit(&#x27;change&#x27;, $event.target.checked)&quot;</span></span><br><span class="line"><span class="string">    &gt;</span></span><br><span class="line"><span class="string">  `</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&lt;base-checkbox v-model=<span class="string">&quot;lovingVue&quot;</span>&gt;&lt;/base-checkbox&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>lovingVue</code> 的值将会传入这个名为 <code>checked</code> 的 prop。同时当 <code>&lt;base-checkbox&gt;</code> 触发一个 <code>change</code> 事件并附带一个新的值的时候，这个 <code>lovingVue</code> 的 property 将会被更新。</p>
+<p>注意你仍然需要在组件的 <code>props</code> 选项里声明 <code>checked</code> 这个 prop。</p>
+</li>
+<li><p>将原生事件绑定到组件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Vue</span>.<span class="title function_">component</span>(<span class="string">&#x27;base-input&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">inheritAttrs</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="attr">props</span>: [<span class="string">&#x27;label&#x27;</span>, <span class="string">&#x27;value&#x27;</span>],</span><br><span class="line">  <span class="attr">computed</span>: &#123;</span><br><span class="line">    <span class="attr">inputListeners</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">var</span> vm = <span class="variable language_">this</span></span><br><span class="line">      <span class="comment">// `Object.assign` 将所有的对象合并为一个新对象</span></span><br><span class="line">      <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;,</span><br><span class="line">        <span class="comment">// 我们从父级添加所有的监听器</span></span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">$listeners</span>,</span><br><span class="line">        <span class="comment">// 然后我们添加自定义监听器，</span></span><br><span class="line">        <span class="comment">// 或覆写一些监听器的行为</span></span><br><span class="line">        &#123;</span><br><span class="line">          <span class="comment">// 这里确保组件配合 `v-model` 的工作</span></span><br><span class="line">          <span class="attr">input</span>: <span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">            vm.$emit(<span class="string">&#x27;input&#x27;</span>, event.<span class="property">target</span>.<span class="property">value</span>)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      )</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;label&gt;</span></span><br><span class="line"><span class="string">      &#123;&#123; label &#125;&#125;</span></span><br><span class="line"><span class="string">      &lt;input</span></span><br><span class="line"><span class="string">        v-bind=&quot;$attrs&quot;</span></span><br><span class="line"><span class="string">        v-bind:value=&quot;value&quot;</span></span><br><span class="line"><span class="string">        v-on=&quot;inputListeners&quot;</span></span><br><span class="line"><span class="string">      &gt;</span></span><br><span class="line"><span class="string">    &lt;/label&gt;</span></span><br><span class="line"><span class="string">  `</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>现在 <code>&lt;base-input&gt;</code> 组件是一个<strong>完全透明的包裹器</strong>了，也就是说它可以完全像一个普通的 <code>&lt;input&gt;</code> 元素一样使用了：所有跟它相同的 attribute 和监听器都可以工作，不必再使用 <code>.native</code> 监听器。</p>
+</li>
+<li><p>.sync修饰符</p>
+<ul>
+<li><p>使用emit出发事件更新数据</p>
+</li>
+<li><pre><code class="js">this.$emit(&#39;update:title&#39;, newTitle)
+&lt;text-document
+  v-bind:title=&quot;doc.title&quot;
+  v-on:update:title=&quot;doc.title = $event&quot;
+&gt;&lt;/text-document&gt;
+//为了方便起见，为这种模式提供一个缩写，即 .sync 修饰符：
+&lt;text-document v-bind:title.sync=&quot;doc.title&quot;&gt;&lt;/text-document&gt;
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - 注意带有 `.sync` 修饰符的 `v-bind` **不能**和表达式一起使用 (例如 `v-bind:title.sync=”doc.title + ‘!’”` 是无效的)。取而代之的是，你只能提供你想要绑定的 property 名，类似 `v-model`。</span><br><span class="line">### 3.插槽 slot</span><br><span class="line"></span><br><span class="line">- **父级模板里的所有内容都是在父级作用域中编译的；子模板里的所有内容都是在子作用域中编译的。**</span><br><span class="line"></span><br><span class="line">- 后备内容 (Submit 作为后备内容 可被默认渲染或替换)</span><br><span class="line"></span><br><span class="line">  ```html</span><br><span class="line">  &lt;button type=&quot;submit&quot;&gt;</span><br><span class="line">    &lt;slot&gt;Submit&lt;/slot&gt;</span><br><span class="line">  &lt;/button&gt;</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>具名插槽</p>
+<ul>
+<li><slot name='header'></slot></li>
+<li><slot name='footer'></slot></li>
+<li><slot name='default'></slot></li>
+<li><strong><code>v-slot</code> 只能添加在 <code>&lt;template&gt;</code> 上</strong>,当被提供的内容<em>只有</em>默认插槽时，组件的标签才可以被当作插槽的模板来使用。这样我们就可以把 <code>v-slot</code> 直接用在组件上</li>
+</ul>
+</li>
+<li><p>作用域插槽</p>
+<ul>
+<li><p>为了让插槽中的内容可以访问父级内容，可以将父级内容作为slot元素的一个attibute绑定上去：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">slot</span> <span class="attr">v-bind:user</span>=<span class="string">&quot;user&quot;</span>&gt;</span></span><br><span class="line">    &#123;&#123; user.lastName &#125;&#125;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>绑定在 <code>&lt;slot&gt;</code> 元素上的 attribute 被称为<strong>插槽 prop</strong>。现在在父级作用域中，我们可以使用带值的 <code>v-slot</code> 来定义我们提供的插槽 prop 的名字：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">current-user</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">template</span> <span class="attr">v-slot:default</span>=<span class="string">&quot;slotProps&quot;</span>&gt;</span></span><br><span class="line">    &#123;&#123; slotProps.user.firstName &#125;&#125;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">current-user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>独占默认插槽的缩写语法</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">current-user</span> <span class="attr">v-slot</span>=<span class="string">&quot;slotProps&quot;</span>&gt;</span></span><br><span class="line">  &#123;&#123; slotProps.user.firstName &#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">current-user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意默认插槽的缩写语法<strong>不能</strong>和具名插槽混用</p>
+</li>
+<li><p>只要出现多个插槽，请始终为<em>所有的</em>插槽使用完整的基于 <code>&lt;template&gt;</code> 的语法</p>
+</li>
+<li><p>解构插槽prop</p>
+<ul>
+<li><p>作用域插槽的内部工作原理是将你的插槽内容包裹在一个拥有单个参数的函数里</p>
+</li>
+<li><pre><code class="html">&lt;current-user v-slot=&quot;&#123; user: person &#125;&quot;&gt;  &#123;&#123; person.firstName &#125;&#125;&lt;/current-user&gt;
+&lt;current-user v-slot=&quot;&#123; user = &#123; firstName: &#39;Guest&#39; &#125; &#125;&quot;&gt;
+  &#123;&#123; user.firstName &#125;&#125;
+&lt;/current-user&gt;
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 动态插槽名</span><br><span class="line"></span><br><span class="line">  ```html</span><br><span class="line">  &lt;base-layout&gt;</span><br><span class="line">  </span><br><span class="line">    &lt;template v-slot:[dynamicSlotName]&gt;</span><br><span class="line">      ...</span><br><span class="line">    &lt;/template&gt;</span><br><span class="line">  </span><br><span class="line">  &lt;/base-layout&gt;</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>具名插槽缩写 v-slot:  -&gt; #</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">current-user</span> #<span class="attr">default</span>=<span class="string">&quot;&#123; user &#125;&quot;</span>&gt;</span></span><br><span class="line">  &#123;&#123; user.firstName &#125;&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">current-user</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="4-动态组件-异步组件"><a href="#4-动态组件-异步组件" class="headerlink" title="4.动态组件&amp;异步组件"></a>4.动态组件&amp;异步组件</h3><ul>
+<li><p>在动态组件上使用keep-alive</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 失活的组件将会被缓存！--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">keep-alive</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">component</span> <span class="attr">v-bind:is</span>=<span class="string">&quot;currentTabComponent&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">component</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">keep-alive</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>异步组件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Vue</span>.<span class="title function_">component</span>(<span class="string">&#x27;async-example&#x27;</span>, <span class="keyword">function</span> (<span class="params">resolve, reject</span>) &#123;</span><br><span class="line">  <span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 向 `resolve` 回调传递组件定义</span></span><br><span class="line">    <span class="title function_">resolve</span>(&#123;</span><br><span class="line">      <span class="attr">template</span>: <span class="string">&#x27;&lt;div&gt;I am async!&lt;/div&gt;&#x27;</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="title class_">Vue</span>.<span class="title function_">component</span>(<span class="string">&#x27;async-webpack-example&#x27;</span>, <span class="keyword">function</span> (<span class="params">resolve</span>) &#123;</span><br><span class="line">  <span class="comment">// 这个特殊的 `require` 语法将会告诉 webpack</span></span><br><span class="line">  <span class="comment">// 自动将你的构建代码切割成多个包，这些包</span></span><br><span class="line">  <span class="comment">// 会通过 Ajax 请求加载</span></span><br><span class="line">  <span class="built_in">require</span>([<span class="string">&#x27;./my-async-component&#x27;</span>], resolve)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="title class_">Vue</span>.<span class="title function_">component</span>(</span><br><span class="line">  <span class="string">&#x27;async-webpack-example&#x27;</span>,</span><br><span class="line">  <span class="comment">// 这个动态导入会返回一个 `Promise` 对象。</span></span><br><span class="line">  <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;./my-async-component&#x27;</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Vue</span>(&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="attr">components</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;my-component&#x27;</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;./my-async-component&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>处理加载状态</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">AsyncComponent</span> = (<span class="params"></span>) =&gt; (&#123;</span><br><span class="line">  <span class="comment">// 需要加载的组件 (应该是一个 `Promise` 对象)</span></span><br><span class="line">  <span class="attr">component</span>: <span class="keyword">import</span>(<span class="string">&#x27;./MyComponent.vue&#x27;</span>),</span><br><span class="line">  <span class="comment">// 异步组件加载时使用的组件</span></span><br><span class="line">  <span class="attr">loading</span>: <span class="title class_">LoadingComponent</span>,</span><br><span class="line">  <span class="comment">// 加载失败时使用的组件</span></span><br><span class="line">  <span class="attr">error</span>: <span class="title class_">ErrorComponent</span>,</span><br><span class="line">  <span class="comment">// 展示加载时组件的延时时间。默认值是 200 (毫秒)</span></span><br><span class="line">  <span class="attr">delay</span>: <span class="number">200</span>,</span><br><span class="line">  <span class="comment">// 如果提供了超时时间且组件加载也超时了，</span></span><br><span class="line">  <span class="comment">// 则使用加载失败时使用的组件。默认值是：`Infinity`</span></span><br><span class="line">  <span class="attr">timeout</span>: <span class="number">3000</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="5-处理边界情况"><a href="#5-处理边界情况" class="headerlink" title="5.处理边界情况"></a>5.处理边界情况</h3><ul>
+<li><p>依赖注入 provide inject</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">provide 选项允许我们指定我们想要提供给后代组件的数据/方法。在这个例子中，就是 &lt;google-map&gt; 内部的 getMap 方法：</span><br><span class="line"><span class="attr">provide</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">getMap</span>: <span class="variable language_">this</span>.<span class="property">getMap</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">然后在任何后代组件里，我们都可以使用 inject 选项来接收指定的我们想要添加在这个实例上的 property：</span><br><span class="line"><span class="attr">inject</span>: [<span class="string">&#x27;getMap&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>程序化的事件侦听器</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mounted</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">attachDatepicker</span>(<span class="string">&#x27;startDateInput&#x27;</span>)</span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">attachDatepicker</span>(<span class="string">&#x27;endDateInput&#x27;</span>)</span><br><span class="line">&#125;,</span><br><span class="line"><span class="attr">methods</span>: &#123;</span><br><span class="line">  <span class="attr">attachDatepicker</span>: <span class="keyword">function</span> (<span class="params">refName</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> picker = <span class="keyword">new</span> <span class="title class_">Pikaday</span>(&#123;</span><br><span class="line">      <span class="attr">field</span>: <span class="variable language_">this</span>.<span class="property">$refs</span>[refName],</span><br><span class="line">      <span class="attr">format</span>: <span class="string">&#x27;YYYY-MM-DD&#x27;</span></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">this</span>.$once(<span class="string">&#x27;hook:beforeDestroy&#x27;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">      picker.<span class="title function_">destroy</span>()</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>控制更新</p>
+<ul>
+<li>$forceUpdate</li>
+<li>通过v-once创建低开销的静态组件</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="../../../../index.html">首页</a></li>
+        
+          <li><a href="../../../../about/">关于</a></li>
+        
+          <li><a href="../../../../archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3%E7%BB%84%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">13.深入了解组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Prop"><span class="toc-number">1.1.</span> <span class="toc-text">1.Prop</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Prop%E5%A4%A7%E5%B0%8F%E5%86%99"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.Prop大小写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Prop%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.1.2.</span> <span class="toc-text">2.Prop类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BC%A0%E5%85%A5%E9%9D%99%E6%80%81%E6%88%96%E5%8A%A8%E6%80%81Prop"><span class="toc-number">1.1.3.</span> <span class="toc-text">3.传入静态或动态Prop</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8D%95%E9%A1%B9%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="toc-number">1.1.4.</span> <span class="toc-text">4.单项数据流</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-Prop%E9%AA%8C%E8%AF%81"><span class="toc-number">1.1.5.</span> <span class="toc-text">5.Prop验证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E9%9D%9Eprop%E7%9A%84attribute"><span class="toc-number">1.1.6.</span> <span class="toc-text">6.非prop的attribute</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">2.自定义组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%A7%8B%E7%BB%88%E4%BD%BF%E7%94%A8kebab-case%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%90%8D"><span class="toc-number">1.2.1.</span> <span class="toc-text">推荐始终使用kebab-case的事件名</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8A%A8%E6%80%81%E7%BB%84%E4%BB%B6-%E5%BC%82%E6%AD%A5%E7%BB%84%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">4.动态组件&amp;异步组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%A4%84%E7%90%86%E8%BE%B9%E7%95%8C%E6%83%85%E5%86%B5"><span class="toc-number">1.4.</span> <span class="toc-text">5.处理边界情况</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jamisondong.github.io/2023/07/08/Vue2Study_4/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&text=Vue2Study(四)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&is_video=false&description=Vue2Study(四)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Vue2Study(四)&body=Check out this article: https://jamisondong.github.io/2023/07/08/Vue2Study_4/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&title=Vue2Study(四)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&name=Vue2Study(四)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jamisondong.github.io/2023/07/08/Vue2Study_4/&t=Vue2Study(四)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jamsion Dong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="../../../../js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
