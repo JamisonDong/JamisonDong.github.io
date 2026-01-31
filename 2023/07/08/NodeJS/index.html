@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="NodeJS架构V8: 执行JS代码，提供桥梁接口Libuv: 时间循环、事件队列、异步IO第三方模块: zlib、http、c-ares等 libuv事件循环机制图（已移除本地图片引用） node事件循环事件循环流程图（已移除本地图片引用） NodeJS特点NodeJS主线程单线程NodeJS更适合IO密集型的高并发请求NodeJS作为中间层![[Pasted image 20230418140">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NodeJS">
+<meta property="og:url" content="https://blog.countingstars.website/2023/07/08/NodeJS/index.html">
+<meta property="og:site_name" content="Jamison&#39;s blogs">
+<meta property="og:description" content="NodeJS架构V8: 执行JS代码，提供桥梁接口Libuv: 时间循环、事件队列、异步IO第三方模块: zlib、http、c-ares等 libuv事件循环机制图（已移除本地图片引用） node事件循环事件循环流程图（已移除本地图片引用） NodeJS特点NodeJS主线程单线程NodeJS更适合IO密集型的高并发请求NodeJS作为中间层![[Pasted image 20230418140">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-08T12:17:39.000Z">
+<meta property="article:modified_time" content="2026-01-31T16:55:02.890Z">
+<meta property="article:author" content="Jamsion Dong">
+<meta property="article:tag" content="NodeJS">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>NodeJS</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="../../../../css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="../JavaScript%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="../TS%E5%9F%BA%E7%A1%80/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.countingstars.website/2023/07/08/NodeJS/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.countingstars.website/2023/07/08/NodeJS/&text=NodeJS"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.countingstars.website/2023/07/08/NodeJS/&is_video=false&description=NodeJS"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NodeJS&body=Check out this article: https://blog.countingstars.website/2023/07/08/NodeJS/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.countingstars.website/2023/07/08/NodeJS/&name=NodeJS&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.countingstars.website/2023/07/08/NodeJS/&t=NodeJS"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS%E6%9E%B6%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">NodeJS架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#libuv"><span class="toc-number">1.1.</span> <span class="toc-text">libuv</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.2.</span> <span class="toc-text">node事件循环</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS%E7%89%B9%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">NodeJS特点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%8D%95%E7%BA%BF%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">NodeJS主线程单线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E6%9B%B4%E9%80%82%E5%90%88IO%E5%AF%86%E9%9B%86%E5%9E%8B%E7%9A%84%E9%AB%98%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82"><span class="toc-number">2.2.</span> <span class="toc-text">NodeJS更适合IO密集型的高并发请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E4%BD%9C%E4%B8%BA%E4%B8%AD%E9%97%B4%E5%B1%82"><span class="toc-number">2.3.</span> <span class="toc-text">NodeJS作为中间层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">常见全局变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#process"><span class="toc-number">3.1.</span> <span class="toc-text">process</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#path"><span class="toc-number">3.2.</span> <span class="toc-text">path</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        NodeJS
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jamsion Dong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-07-08T12:17:39.000Z" class="dt-published" itemprop="datePublished">2023-07-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="../../../../categories/%E8%AF%AD%E8%A8%80/">语言</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="../../../../tags/NodeJS/" rel="tag">NodeJS</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="NodeJS架构"><a href="#NodeJS架构" class="headerlink" title="NodeJS架构"></a>NodeJS架构</h2><p><strong>V8</strong>: 执行JS代码，提供桥梁接口<br><strong>Libuv</strong>: 时间循环、事件队列、异步IO<br><strong>第三方模块</strong>: zlib、http、c-ares等</p>
+<h3 id="libuv"><a href="#libuv" class="headerlink" title="libuv"></a>libuv</h3><p>事件循环机制图（已移除本地图片引用）</p>
+<h3 id="node事件循环"><a href="#node事件循环" class="headerlink" title="node事件循环"></a>node事件循环</h3><p>事件循环流程图（已移除本地图片引用）</p>
+<h2 id="NodeJS特点"><a href="#NodeJS特点" class="headerlink" title="NodeJS特点"></a>NodeJS特点</h2><h3 id="NodeJS主线程单线程"><a href="#NodeJS主线程单线程" class="headerlink" title="NodeJS主线程单线程"></a>NodeJS主线程单线程</h3><h3 id="NodeJS更适合IO密集型的高并发请求"><a href="#NodeJS更适合IO密集型的高并发请求" class="headerlink" title="NodeJS更适合IO密集型的高并发请求"></a>NodeJS更适合IO密集型的高并发请求</h3><h3 id="NodeJS作为中间层"><a href="#NodeJS作为中间层" class="headerlink" title="NodeJS作为中间层"></a>NodeJS作为中间层</h3><p>![[Pasted image 20230418140506.png]]</p>
+<h2 id="常见全局变量"><a href="#常见全局变量" class="headerlink" title="常见全局变量"></a>常见全局变量</h2><p><code>__filename</code>: 返回正在执行脚本文件的绝对路径<br><code>__dirname</code>: 返回正在执行脚本的所在目录<br><code>timer类函数</code>: 执行顺序与事件循环间的关系<br><code>process</code>:提供与当前进程互动的接口<br><code>require</code>: 实现模块的加载<br><code>module、exports</code>: 处理模块的导出</p>
+<h3 id="process"><a href="#process" class="headerlink" title="process"></a>process</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>资源： <span class="variable constant_">CPU</span> 内存</span><br><span class="line"><span class="comment">// const fs = require(&#x27;fs&#x27;);</span></span><br><span class="line"><span class="comment">// Buffer.alloc(1001)</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">memoryUsage</span>());</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">rss</span>: <span class="number">31047680</span>, <span class="comment">// 常驻内存</span></span><br><span class="line">  <span class="attr">heapTotal</span>: <span class="number">6434816</span>, <span class="comment">// 申请的总内存大小</span></span><br><span class="line">  <span class="attr">heapUsed</span>: <span class="number">5687912</span>, <span class="comment">// 使用内存</span></span><br><span class="line">  <span class="attr">external</span>: <span class="number">422438</span>,  <span class="comment">// 底层核心模块占据内存大小</span></span><br><span class="line">  <span class="attr">arrayBuffers</span>: <span class="number">17606</span> <span class="comment">// 独立空间大小(缓冲区)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">cpuUsage</span>());</span><br><span class="line"><span class="comment">//用户 系统</span></span><br><span class="line">&#123; <span class="attr">user</span>: <span class="number">15000</span>, <span class="attr">system</span>: <span class="number">46000</span> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>运行环境： 运行目录 node环境 cpu架构 用户环境 系统平台</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行目录</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">cwd</span>());</span><br><span class="line"></span><br><span class="line"><span class="comment">// node环境</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">version</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">versions</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// cpu架构</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">arch</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户环境</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">NODE_ENV</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">PATH</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用户管理员目录</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">USERPROFILE</span>); <span class="comment">//HOME</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 系统平台</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">env</span>.<span class="property">NODE_ENV</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">platform</span>);</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>运行状态： 启动参数、<span class="variable constant_">PID</span>、运行时间</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">argv</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">argv0</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">exeArgv</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="property">pid</span>);  <span class="comment">// | ppid</span></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">uptime</span>());</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123; <span class="variable language_">console</span>.<span class="title function_">log</span>(process.<span class="title function_">uptime</span>()) &#125;, <span class="number">3000</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>事件监听</span><br><span class="line"></span><br><span class="line">process.<span class="title function_">on</span>(<span class="string">&#x27;exit&#x27;</span>, <span class="function">(<span class="params">code</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 只支持同步代码</span></span><br><span class="line"></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;exit &#x27;</span> + code);</span><br><span class="line"></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="title function_">on</span>(<span class="string">&#x27;beforeExit&#x27;</span>, <span class="function">(<span class="params">code</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 支持异步代码</span></span><br><span class="line"></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;beforeExit &#x27;</span> + code);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 需要注意的是，在 beforeExit 中执行的异步操作可能会导致 Node.js 进程无法正常退出，因此应该尽量避免在 beforeExit 中执行长时间运行的异步操作。</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// setTimeout(() =&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//   console.log(&#x27;before exit !!!&#x27;);</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// &#125;, 1000)</span></span><br><span class="line"></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;executed&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="title function_">exit</span>();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="number">5.</span>标准输入 输出 错误</span><br><span class="line"></span><br><span class="line"><span class="comment">/* console.log = function (data) &#123;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  // process.stdout 返回流</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  process.stdout.write(&#x27;---&#x27; + data + &#x27;\n&#x27;);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">  </span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">console.log(11);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">console.log(22); */</span></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"> <span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line">fs.<span class="title function_">createReadStream</span>(<span class="string">&#x27;test.txt&#x27;</span>)</span><br><span class="line"></span><br><span class="line">  .<span class="title function_">pipe</span>(process.<span class="property">stdout</span>) </span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="property">stdin</span>.<span class="title function_">pipe</span>(process.<span class="property">stdout</span>)</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">process.<span class="property">stdin</span>.<span class="title function_">setEncoding</span>(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"></span><br><span class="line">process.<span class="property">stdin</span>.<span class="title function_">on</span>(<span class="string">&#x27;readable&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> chunk = process.<span class="property">stdin</span>.<span class="title function_">read</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (chunk !== <span class="literal">null</span>) &#123;</span><br><span class="line"></span><br><span class="line">    process.<span class="property">stdout</span>.<span class="title function_">write</span>(<span class="string">&#x27;data &#x27;</span> + chunk);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="path"><a href="#path" class="headerlink" title="path"></a>path</h3><p><code>basename()</code> 获取路径中基础名称<br><code>dirname()</code> 获取路径中的目录名称<br><code>extname()</code> 获取路径中的扩展名称<br><code>isAbsolute()</code> 获取路径是否为绝对路径<br><code>join()</code> 拼接多个路径片段<br><code>resolve()</code> 返回绝对路径<br><code>pasre()</code> 解析路径<br><code>format()</code> 序列化路径<br><code>normalize()</code> 规范化路径</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="../../../../index.html">首页</a></li>
+        
+          <li><a href="../../../../about/">关于</a></li>
+        
+          <li><a href="../../../../archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS%E6%9E%B6%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">NodeJS架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#libuv"><span class="toc-number">1.1.</span> <span class="toc-text">libuv</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#node%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.2.</span> <span class="toc-text">node事件循环</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NodeJS%E7%89%B9%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">NodeJS特点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%8D%95%E7%BA%BF%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">NodeJS主线程单线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E6%9B%B4%E9%80%82%E5%90%88IO%E5%AF%86%E9%9B%86%E5%9E%8B%E7%9A%84%E9%AB%98%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82"><span class="toc-number">2.2.</span> <span class="toc-text">NodeJS更适合IO密集型的高并发请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NodeJS%E4%BD%9C%E4%B8%BA%E4%B8%AD%E9%97%B4%E5%B1%82"><span class="toc-number">2.3.</span> <span class="toc-text">NodeJS作为中间层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">常见全局变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#process"><span class="toc-number">3.1.</span> <span class="toc-text">process</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#path"><span class="toc-number">3.2.</span> <span class="toc-text">path</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.countingstars.website/2023/07/08/NodeJS/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.countingstars.website/2023/07/08/NodeJS/&text=NodeJS"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.countingstars.website/2023/07/08/NodeJS/&is_video=false&description=NodeJS"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NodeJS&body=Check out this article: https://blog.countingstars.website/2023/07/08/NodeJS/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.countingstars.website/2023/07/08/NodeJS/&title=NodeJS"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.countingstars.website/2023/07/08/NodeJS/&name=NodeJS&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.countingstars.website/2023/07/08/NodeJS/&t=NodeJS"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jamsion Dong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="../../../../js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="共同点：提高代码的复用性1. HOC (Higher Order Component) 高阶组件HOC 是 React 中复用代码的编程模式。具体来说，高阶组件是一个纯函数，它接收一个组件并返回一个新的组件。常见例子：React Redux 的 connect，将 Redux Store 和 React 组件联系起来。 2. Render PropsRender Props 是 React 中复用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HOC vs Render Props vs Hooks">
+<meta property="og:url" content="https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/index.html">
+<meta property="og:site_name" content="Jamison&#39;s blogs">
+<meta property="og:description" content="共同点：提高代码的复用性1. HOC (Higher Order Component) 高阶组件HOC 是 React 中复用代码的编程模式。具体来说，高阶组件是一个纯函数，它接收一个组件并返回一个新的组件。常见例子：React Redux 的 connect，将 Redux Store 和 React 组件联系起来。 2. Render PropsRender Props 是 React 中复用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-21T22:39:45.000Z">
+<meta property="article:modified_time" content="2026-01-31T16:55:02.890Z">
+<meta property="article:author" content="Jamsion Dong">
+<meta property="article:tag" content="React">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>HOC vs Render Props vs Hooks</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="../../../../css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="../Git%E5%9C%A8%E4%B8%80%E4%B8%AA%E7%94%B5%E8%84%91%E5%90%8C%E6%97%B6%E8%AE%BE%E7%BD%AE%E4%B8%AA%E4%BA%BA%E5%92%8C%E5%85%AC%E5%8F%B8%E8%B4%A6%E6%88%B7/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="../VSCode-Chrome-Debugger/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&text=HOC vs Render Props vs Hooks"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&is_video=false&description=HOC vs Render Props vs Hooks"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HOC vs Render Props vs Hooks&body=Check out this article: https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&name=HOC vs Render Props vs Hooks&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&t=HOC vs Render Props vs Hooks"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B1%E5%90%8C%E7%82%B9%EF%BC%9A%E6%8F%90%E9%AB%98%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%8D%E7%94%A8%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">共同点：提高代码的复用性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-HOC-Higher-Order-Component-%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">1. HOC (Higher Order Component) 高阶组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Render-Props"><span class="toc-number">1.2.</span> <span class="toc-text">2. Render Props</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-React-Hooks"><span class="toc-number">1.3.</span> <span class="toc-text">3. React Hooks</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%90%8C%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">不同点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%8D%E7%94%A8%E6%80%A7"><span class="toc-number">2.1.</span> <span class="toc-text">1. 复用性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%AF%E8%AF%BB%E6%80%A7-%E6%98%93%E7%94%A8%E6%80%A7"><span class="toc-number">2.2.</span> <span class="toc-text">2. 可读性&#x2F;易用性</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        HOC vs Render Props vs Hooks
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Jamsion Dong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-02-21T22:39:45.000Z" class="dt-published" itemprop="datePublished">2025-02-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="../../../../categories/%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/">前端框架</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="../../../../tags/React/" rel="tag">React</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="共同点：提高代码的复用性"><a href="#共同点：提高代码的复用性" class="headerlink" title="共同点：提高代码的复用性"></a>共同点：提高代码的复用性</h2><h3 id="1-HOC-Higher-Order-Component-高阶组件"><a href="#1-HOC-Higher-Order-Component-高阶组件" class="headerlink" title="1. HOC (Higher Order Component) 高阶组件"></a>1. HOC (Higher Order Component) 高阶组件</h3><p>HOC 是 React 中复用代码的编程模式。具体来说，高阶组件是一个纯函数，它接收一个组件并返回一个新的组件。常见例子：React Redux 的 connect，将 Redux Store 和 React 组件联系起来。</p>
+<h3 id="2-Render-Props"><a href="#2-Render-Props" class="headerlink" title="2. Render Props"></a>2. Render Props</h3><p>Render Props 是 React 中复用代码的编程模式。<strong>主要解决组件逻辑相同而渲染规则不同的复用问题</strong>。常见例子：React Router 中，自定义 render 函数，按需使用 routeProps 来渲染业务组件。</p>
+<h3 id="3-React-Hooks"><a href="#3-React-Hooks" class="headerlink" title="3. React Hooks"></a>3. React Hooks</h3><p>React Hooks 是 React 16.8 引入的一组 API。开发者可以在不使用 class 写法的情况下，借助 Hooks 在纯函数组件中使用状态和其他 React 功能。</p>
+<h2 id="不同点"><a href="#不同点" class="headerlink" title="不同点"></a>不同点</h2><h3 id="1-复用性"><a href="#1-复用性" class="headerlink" title="1. 复用性"></a>1. 复用性</h3><p>HOC、Render Props、Hooks 都有提高代码复用性的能力，但根据其设计模式上的差别，适用范围也会有所差异：<strong>HOC 基于单一功能原则，对传入组件进行增强</strong>；<strong>Render Props 复用数据源，按需渲染 UI</strong>；<strong>Hooks 对于不同场景的复用都有较好的普适性</strong>。</p>
+<h3 id="2-可读性-易用性"><a href="#2-可读性-易用性" class="headerlink" title="2. 可读性&#x2F;易用性"></a>2. 可读性&#x2F;易用性</h3><p><strong>HOC 可读性差，易用性差。</strong></p>
+<p>HOC 写法看似简洁，但开发者无法通过阅读 HOC 的调用辨别出方法的作用：看不到接收和返回的结构，增加调试和修复问题的成本；进行多个 HOC 组合使用时，不能确定使用顺序且有命名空间冲突风险，需要了解每个 HOC 的具体实现，难以维护。不建议过度使用 HOC，但比较适合不需要个性化开发定制时使用：常见于第三方库提供 HOC 类型的 API 给开发者进行功能增强。</p>
+<p><strong>Render Props 可读性较好，易用性强。</strong></p>
+<p>代码相对冗长，但能清晰看到组件接收的 props 以及传递的功能等，可以对 props 属性重命名，不会有命名冲突。但难以在 render 函数外使用数据源，且容易形成嵌套地狱。</p>
+<p><strong>Hooks 可读性强，易用性较好。</strong></p>
+<p>使用 Hooks 时，能清晰看到组件接收的 props 以及传递的功能等，可以对 props 属性重命名，不会有命名冲突，不存在嵌套地狱，且没有数据源获取及使用范围的限制。但 Hooks 编程应遵循函数式编程的实践，否则 Hooks 所需的依赖数组的处理会造成较大的心智负担。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="../../../../index.html">首页</a></li>
+        
+          <li><a href="../../../../about/">关于</a></li>
+        
+          <li><a href="../../../../archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B1%E5%90%8C%E7%82%B9%EF%BC%9A%E6%8F%90%E9%AB%98%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%8D%E7%94%A8%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">共同点：提高代码的复用性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-HOC-Higher-Order-Component-%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">1. HOC (Higher Order Component) 高阶组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Render-Props"><span class="toc-number">1.2.</span> <span class="toc-text">2. Render Props</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-React-Hooks"><span class="toc-number">1.3.</span> <span class="toc-text">3. React Hooks</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%90%8C%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">不同点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%8D%E7%94%A8%E6%80%A7"><span class="toc-number">2.1.</span> <span class="toc-text">1. 复用性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%AF%E8%AF%BB%E6%80%A7-%E6%98%93%E7%94%A8%E6%80%A7"><span class="toc-number">2.2.</span> <span class="toc-text">2. 可读性&#x2F;易用性</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&text=HOC vs Render Props vs Hooks"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&is_video=false&description=HOC vs Render Props vs Hooks"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HOC vs Render Props vs Hooks&body=Check out this article: https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&title=HOC vs Render Props vs Hooks"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&name=HOC vs Render Props vs Hooks&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://blog.countingstars.website/2025/02/21/HOC-vs-Render-Props-vs-Hooks/&t=HOC vs Render Props vs Hooks"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Jamsion Dong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/JamisonDong">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="../../../../js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
